@@ -1,4 +1,4 @@
-name: Update submodules
+name: Update Submodules
 
 on:
   workflow_dispatch:
@@ -8,20 +8,38 @@ permissions:
   contents: write
 
 jobs:
-  build:
-    name: Build
+  update-submodules:
+    name: Update Submodules
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: Update submodules recursively
+        with:
+          ref: main # Adjust this if your default branch is not `main`
+
+      - name: Update Submodules Recursively
         run: |
+          echo "Updating submodules recursively..."
           git submodule update --init --recursive
           git submodule update --recursive --remote
+          echo "Submodule status after update:"
+          git submodule status
 
-      - name: Push changes
+      - name: Configure Git User
         run: |
+          echo "Configuring git user..."
           git config --global user.email "actions@users.noreply.github.com"
           git config --global user.name "tilbot"
-          git diff --quiet || git commit --all --message "Update submodules"
-          git push
+
+      - name: Commit and Push Changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking for changes..."
+          if ! git diff --quiet; then
+            echo "Changes detected. Committing and pushing..."
+            git commit --all --message "Update submodules"
+            git push
+          else
+            echo "No changes detected. Skipping push."
+          fi
