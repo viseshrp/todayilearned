@@ -15,7 +15,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          ref: main # Adjust this if your default branch is not `main`
+          ref: main
 
       - name: Update Submodules Recursively
         run: |
