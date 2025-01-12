@@ -1,0 +1,71 @@
+---
+import Info from "../component/Info.astro";
+import HTML from "../layout/HTML.astro";
+import Layout from "../layout/Layout.astro";
+import { getInfo, getTILs } from "../util/entry";
+
+const entries = await getTILs().then(entries => Promise.all(entries.map(getInfo)));
+---
+
+<HTML>
+  <Layout>
+    <div class="content">
+      <h2>Welcome!</h2>
+      <p>
+        My repository of things I've learned. Mostly programming related. Part microblog, part
+        knowledge base, part digital garden. If you like this, you might enjoy
+        <a href="http://viseshprasad.com">my blog</a>.
+      </p>
+      <p>{entries.length} TILs so far!</p>
+      <h2>Recent TILs</h2>
+      <ul class="recents">
+        {
+          entries
+            .sort((a, b) => b.date.getTime() - a.date.getTime())
+            .slice(0, 10)
+            .map(entry => (
+              <li class="entry">
+                <Info date={entry.date} category={entry.category} />
+
+                <h3 class="title">
+                  <a class="title-link" href={entry.href}>
+                    {entry.title}
+                  </a>
+                </h3>
+
+                <Fragment set:html={entry.excerpt} />
+              </li>
+            ))
+        }
+      </ul>
+    </div>
+  </Layout>
+</HTML>
+
+<style>
+  .content {
+    max-width: 80ch;
+  }
+
+  .content > :first-child:not([class]) {
+    margin-block-start: 0;
+  }
+
+  .recents {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .title {
+    margin-block: 4px;
+  }
+
+  .title-link {
+    display: block;
+  }
+
+  .entry > :global(p) {
+    margin: 0;
+  }
+</style>

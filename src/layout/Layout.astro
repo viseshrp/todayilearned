@@ -1,0 +1,142 @@
+---
+import Search from "astro-pagefind/components/Search";
+
+import Icon from "../component/Icon.astro";
+import Navigation from "../component/Navigation.astro";
+
+interface Props {
+  id?: string;
+}
+---
+
+<div class="wrapper">
+  <nav class="nav scroll">
+    <a class="skip" href="#content">Skip to content</a>
+
+    <a class="title" href="/"> Today I Learned</a>
+    <p class="blurb">A collection of useful things I've learned.</p>
+    <p class="blurb">By <a href="https://viseshprasad.com">Visesh Rajendraprasad</a></p>
+    <Search id="search" className="pagefind-ui" uiOptions={{ showImages: false }} />
+    <Navigation id={Astro.props.id} />
+    <ul class="footer">
+      <li class="footer-item">
+        <a class="footer-link" href="https://github.com/viseshrp/todayilearned">
+          <Icon icon="code" size={12} />
+          <span>Source</span>
+        </a>
+      </li>
+      <li class="footer-item">
+        <a class="footer-link" href="/rss.xml">
+          <Icon icon="rss" size={12} />
+          <span>RSS feed</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <main class="main" id="content">
+    <slot />
+  </main>
+</div>
+
+<style>
+  .wrapper {
+    --sidebar-width: 0;
+    display: grid;
+    width: 100%;
+    grid-template:
+      "main" 1fr
+      "nav" auto / auto;
+    padding-left: var(--sidebar-width);
+
+    @media (min-width: 60rem) {
+      --sidebar-width: min(40vw, 25rem);
+      display: block;
+    }
+  }
+
+  .nav,
+  .main {
+    padding: 24px 32px;
+  }
+
+  .nav {
+    grid-area: nav;
+    overflow: auto;
+    box-shadow: 1px 0 0 #00000022;
+
+    @media (min-width: 60rem) {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: var(--sidebar-width);
+    }
+  }
+
+  .main {
+    grid-area: main;
+    display: grid;
+    grid-auto-flow: row;
+  }
+
+  .main > :global(:first-child:not([class])) {
+    margin: 0;
+  }
+
+  .skip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateY(-100%);
+  }
+
+  .skip:focus {
+    transform: translateY(0);
+  }
+
+  .title {
+    display: inline-block;
+    margin-block-end: 16px;
+    font-size: 1.5rem;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+  }
+
+  :global(#search) {
+    margin-block-start: 16px;
+  }
+
+  :global(#search:has(.pagefind-ui__results:not(:empty))) + :global(*) {
+    display: none;
+  }
+
+  .footer {
+    margin-top: auto;
+    padding-block-start: 48px;
+    line-height: 1.25;
+    display: flex;
+    align-items: center;
+  }
+
+  .footer-item:not(:first-child)::before {
+    content: "/";
+    position: relative;
+    top: -3px;
+    margin-inline: 24px;
+    text-decoration: none;
+    color: var(--color-border);
+    font-weight: 900;
+  }
+
+  .footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .footer-link > :global(:first-child) {
+    position: relative;
+    top: -1px;
+  }
+</style>
