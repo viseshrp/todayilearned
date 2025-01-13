@@ -33,13 +33,13 @@ jobs:
 
       - name: Commit and Push Changes
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PAT: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         run: |
           echo "Checking for changes..."
           if ! git diff --quiet; then
             echo "Changes detected. Committing and pushing..."
             git commit --all --message "Update submodules"
-            git push
+            git push https://viseshrp:${PAT}@github.com/viseshrp/todayilearned.git HEAD:main
           else
             echo "No changes detected. Skipping push."
           fi
